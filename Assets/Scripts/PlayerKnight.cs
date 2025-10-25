@@ -26,12 +26,12 @@ public class PlayerKnight : Player
     {
         float moveInput = 0f;
 
-        if (Input.GetKey(KeyCode.A))
+        if (Input.GetKey(leftMoveKey))
         {
             moveInput = -1f;
             spRenderer.flipX = true;
         }
-        else if (Input.GetKey(KeyCode.D))
+        else if (Input.GetKey(rightMoveKey))
         {
             moveInput = 1f;
             spRenderer.flipX = false;
@@ -47,7 +47,7 @@ public class PlayerKnight : Player
         }
         if (!groundTest) isGrounded = false;
 
-        if (Input.GetKeyDown(KeyCode.LeftShift) && readyBlock)
+        if (Input.GetKeyDown(skillKey) && readyBlock)
         {
             readyBlock = false;
             isBlocking = true;
@@ -58,7 +58,7 @@ public class PlayerKnight : Player
             StartCoroutine(blockingRoutine);
         }
 
-        if (Input.GetKeyDown(KeyCode.Space) && isGrounded)
+        if (Input.GetKeyDown(jumpKey) && isGrounded)
         {
             isGrounded = false;
             vy = jumpForce;

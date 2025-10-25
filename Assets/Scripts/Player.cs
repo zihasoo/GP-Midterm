@@ -20,6 +20,11 @@ public class Player : MonoBehaviour
     protected bool isGrounded;
     protected bool isFalling;
 
+    protected const KeyCode jumpKey = KeyCode.UpArrow;
+    protected const KeyCode leftMoveKey = KeyCode.LeftArrow;
+    protected const KeyCode rightMoveKey = KeyCode.RightArrow;
+    protected const KeyCode skillKey = KeyCode.Space;
+
     protected List<string> animeParameters = new()
     {
         "IDLE", "Run", "Jump", "Falling"
