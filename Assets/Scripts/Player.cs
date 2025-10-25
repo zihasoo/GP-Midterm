@@ -35,60 +35,6 @@ public class Player : MonoBehaviour
         isFalling = false;
     }
 
-    void Update()
-    {
-        float moveInput = 0f;
-
-        if (Input.GetKey(KeyCode.A))
-        {
-            moveInput = -1f;
-            spRenderer.flipX = true;
-        }
-        else if (Input.GetKey(KeyCode.D))
-        {
-            moveInput = 1f;
-            spRenderer.flipX = false;
-        }
-        float vx = moveInput * moveSpeed;
-        float vy = rb.velocityY;
-
-        bool groundTest = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayer) && rb.velocityY <= 1e-4;
-        if (!isGrounded && groundTest) //처음으로 땅을 만났을 때
-        {
-            isGrounded = true;
-            isFalling = false;
-            animator.SetBool("Falling", false);
-            animator.SetBool("Jump", false);
-        }
-        if (!groundTest) isGrounded = false;
-
-        if (Input.GetKeyDown(KeyCode.Space) && isGrounded)
-        {
-            isGrounded = false;
-            vy = jumpForce;
-            SetParameterOnlyTrue("Jump");
-        }
-
-        if (!isFalling && !isGrounded && vy < 0)
-        { //처음으로 떨어지기 시작할 때
-            isFalling = true;
-            SetParameterOnlyTrue("Falling");
-        }
-
-        rb.velocity = new Vector2(vx, vy);
-
-        if (!isGrounded) return;
-
-        if (moveInput != 0)
-        {
-            SetParameterOnlyTrue("Run");
-        }
-        else
-        {
-            SetParameterOnlyTrue("IDLE");
-        }
-    }
-
     protected void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.CompareTag("Obstacle"))
