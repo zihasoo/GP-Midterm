@@ -75,14 +75,15 @@ MonoBehaviour:
   maxHP: 5
   moveSpeed: 5
   jumpForce: 8
+  skillDuration: 3
+  skillCoolTime: 0
   groundCheck: {fileID: 800750431637803854}
   groundCheckRadius: 0.1
   groundLayer:
     serializedVersion: 2
     m_Bits: 64
+  playerUI: {fileID: 0}
   slowFallingEffectPrefab: {fileID: 3251565695874329184, guid: 453274780987924489b3baf0f91b3fca, type: 3}
-  slowFallingDuration: 3
-  slowFallingCoolTime: 0
   slowFallingSpeed: 3
 --- !u!212 &4469650759941480143
 SpriteRenderer:

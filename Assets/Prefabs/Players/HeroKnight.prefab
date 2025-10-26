@@ -53,15 +53,16 @@ MonoBehaviour:
   maxHP: 5
   moveSpeed: 5
   jumpForce: 8
+  skillDuration: 5
+  skillCoolTime: 0
   groundCheck: {fileID: 7020373061106406792}
   groundCheckRadius: 0.1
   groundLayer:
     serializedVersion: 2
     m_Bits: 64
+  playerUI: {fileID: 0}
   blockEffectPrefab: {fileID: 4207670940138599717, guid: b4f5986216eb1a2488896ac9a572cde3, type: 3}
-  blockEndEffectPrefab: {fileID: 1429954232896169633, guid: 83036083a4ebcd34f98131bd3cf6f4d2, type: 3}
-  blockDuration: 3
-  blockCoolTime: 0
+  blockHitEffectPrefab: {fileID: 1429954232896169633, guid: 83036083a4ebcd34f98131bd3cf6f4d2, type: 3}
 --- !u!95 &3193717789829477572
 Animator:
   serializedVersion: 7

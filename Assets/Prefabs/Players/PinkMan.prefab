@@ -106,15 +106,16 @@ MonoBehaviour:
   maxHP: 5
   moveSpeed: 5
   jumpForce: 8
+  skillDuration: 5
+  skillCoolTime: 0
   groundCheck: {fileID: 4796919014678817768}
   groundCheckRadius: 0.1
   groundLayer:
     serializedVersion: 2
     m_Bits: 64
+  playerUI: {fileID: 0}
   bigJumpEffectPrefab: {fileID: 3432958286849152088, guid: 87ee7299dd44ed747af24dbb91bcd33b, type: 3}
   bigJumpActiveEffectPrefab: {fileID: 1048266830770422499, guid: 9e4d213ee95d3ca4b8b091d81c692e92, type: 3}
-  bigJumpDuration: 3
-  bigJumpCoolTime: 0
 --- !u!212 &2576404756666782855
 SpriteRenderer:
   m_ObjectHideFlags: 0
