@@ -38,18 +38,12 @@ public class PlayerKnight : Player
 
     protected new void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.CompareTag("Obstacle"))
+        if (collision.CompareTag("Obstacle") && isSkilling)
         {
-            if (isSkilling)
-            {
-                HitInterrupt();
-                return;
-            }
-            HP--;
-            playerUI.SetHP(HP);
-            PlayHitEffect();
-            animator.SetTrigger("Hit");
+            HitInterrupt();
+            return;
         }
+        base.OnTriggerEnter2D(collision);
     }
 
     protected override void OnSkillActiveEnd() => Destroy(blockEffectInstance);
