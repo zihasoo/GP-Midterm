@@ -1,20 +1,12 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using static UnityEngine.GraphicsBuffer;
 
 public class UIManager : MonoBehaviour
 {
     [Header("Players")]
     public Player[] players;
-
-    [Header("UI Refs")]
-    public Text hpText;
-    public RectTransform hpFill;
-    public Text skillTimeText;
-    public RectTransform skillCooldownFill;
+    public GameObject playerChangeEffect;
 
     [Header("Camera")]
     public Transform cameraTransform;
@@ -45,15 +37,6 @@ public class UIManager : MonoBehaviour
 
         var p = GetActivePlayer();
 
-        //hpText.text = $"HP {p.CurrentHP}/{p.maxHP}";
-        //float width = FillMaxWidth * ((float)p.CurrentHP / p.maxHP);
-        //hpFill.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, width);
-
-        //width = FillMaxWidth * p.GetSkillCooldownNormalized();
-        //skillCooldownFill.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, width);
-        //float sec = p.GetSkillCooldownNormalized();
-        //skillTimeText.text = $"{sec:0.0}s";
-
         cameraTransform.position = new Vector3(p.transform.position.x, p.transform.position.y + 3f - playerPosCorrection[currentIndex], -10);
     }
 
@@ -75,6 +58,8 @@ public class UIManager : MonoBehaviour
         
         from.gameObject.SetActive(false);
         currentIndex = targetIndex;
+        var obj = Instantiate(playerChangeEffect, target.transform.position, Quaternion.identity);
+        Destroy(obj, 0.7f);
     }
 
     private Player GetActivePlayer() => players[currentIndex];

@@ -134,11 +134,15 @@ public class Player : MonoBehaviour
             animator.SetTrigger("Hit");
             HitInterrupt();
         }
+        else if (collision.CompareTag("Item"))
+        {
+            HP = Mathf.Min(HP + 1, maxHP);
+            playerUI.SetHP(HP);
+        }
     }
 
     protected void PlayHitEffect()
     {
-        if (hitPrefab == null) return;
         var obj = Instantiate(hitPrefab, transform.position, Quaternion.identity);
         Destroy(obj, 0.5f);
     }

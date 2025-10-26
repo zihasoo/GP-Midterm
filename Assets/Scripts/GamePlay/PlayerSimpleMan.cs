@@ -25,4 +25,9 @@ public class PlayerSimpleMan : Player
         if (isSkilling && vy < -slowFallingSpeed)
             vy = -slowFallingSpeed;
     }
+
+    private void OnDisable()
+    {
+        transform.rotation = Quaternion.identity;
+    }
 }
