@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class PlayerPinkMan : Player
 {
+    [Header("PinkMan Data")]
     public GameObject bigJumpEffectPrefab;
     public GameObject bigJumpActiveEffectPrefab;
 
@@ -11,8 +12,8 @@ public class PlayerPinkMan : Player
 
     protected new void Awake()
     {
+        playerUI.Init("PinkMan", maxHP);
         base.Awake();
-        playerUI.Init("PinkMan", "Super Jump", maxHP);
     }
 
     protected override void TryStartSkill()
@@ -29,20 +30,15 @@ public class PlayerPinkMan : Player
         Destroy(obj, 0.5f);
 
         vy *= 1.5f;
-        StopBigJumpActiveRoutine();
-    }
-
-    protected override void OnSkillActiveEnd()
-    {
-        Destroy(bigJumpActiveEffectInstance);
-    }
-
-    void StopBigJumpActiveRoutine()
-    {
         isSkilling = false;
         Destroy(bigJumpActiveEffectInstance);
         if (skillActiveRoutine != null)
             StopCoroutine(skillActiveRoutine);
         playerUI.SkillCoolDown(skillCoolTime, () => isSkillReady = true);
+    }
+
+    protected override void OnSkillActiveEnd()
+    {
+        Destroy(bigJumpActiveEffectInstance);
     }
 }

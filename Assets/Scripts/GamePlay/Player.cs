@@ -4,17 +4,22 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    public GameObject hitPrefab;
+    [Header("Player Data")]
     public int maxHP;
     public float moveSpeed = 5f;
     public float jumpForce = 7f;
     public float skillDuration;
     public float skillCoolTime;
 
+    [Header("Ground Check")]
     public Transform groundCheck;
     public float groundCheckRadius = 0.1f;
     public LayerMask groundLayer;
+
+    [Header("Dependency")]
+    public GameObject hitPrefab;
     public PlayerUI playerUI;
+    public UIManager uiManager;
 
     protected Rigidbody2D rb;
     protected Animator animator;
@@ -25,11 +30,6 @@ public class Player : MonoBehaviour
     protected bool isSkilling;
     protected bool isSkillReady;
     protected Coroutine skillActiveRoutine;
-
-    protected const KeyCode jumpKey = KeyCode.UpArrow;
-    protected const KeyCode leftMoveKey = KeyCode.LeftArrow;
-    protected const KeyCode rightMoveKey = KeyCode.RightArrow;
-    protected const KeyCode skillKey = KeyCode.Space;
 
     protected List<string> animeParameters = new()
     {
@@ -46,15 +46,36 @@ public class Player : MonoBehaviour
         animator = GetComponent<Animator>();
         rb = GetComponent<Rigidbody2D>();
         spRenderer = GetComponent<SpriteRenderer>();
+        SetDefault();
+    }
+
+    public void SetDefault()
+    {
         HP = maxHP;
         isGrounded = false;
         isFalling = false;
         isSkilling = false;
         isSkillReady = true;
+        if (skillActiveRoutine != null)
+            StopCoroutine(skillActiveRoutine);
+        OnSkillActiveEnd();
+        playerUI.SetDefault();
+    }
+
+    public void Heal(int healAmount)
+    {
+        HP = Mathf.Min(HP + healAmount, maxHP);
+        playerUI.SetHPUI(HP);
     }
 
     protected void Update()
     {
+        if (transform.position.y < -10f)
+        {
+            uiManager.OnDie();
+            return;
+        }
+
         float moveInput = ReadMoveInput();
 
         float vx = moveInput * moveSpeed;
@@ -69,10 +90,10 @@ public class Player : MonoBehaviour
         if (!groundTest)
             isGrounded = false;
 
-        if (Input.GetKeyDown(skillKey) && isSkillReady)
+        if (Input.GetKeyDown(GameSettings.SkillKey) && isSkillReady)
             TryStartSkill();
 
-        if (Input.GetKeyDown(jumpKey) && isGrounded)
+        if (Input.GetKeyDown(GameSettings.JumpKey) && isGrounded)
         {
             isGrounded = false;
             vy = jumpForce;
@@ -101,12 +122,12 @@ public class Player : MonoBehaviour
     protected float ReadMoveInput()
     {
         float moveInput = 0f;
-        if (Input.GetKey(leftMoveKey))
+        if (Input.GetKey(GameSettings.LeftKey))
         {
             moveInput = -1f;
             spRenderer.flipX = true;
         }
-        else if (Input.GetKey(rightMoveKey))
+        else if (Input.GetKey(GameSettings.RightKey))
         {
             moveInput = 1f;
             spRenderer.flipX = false;
@@ -123,40 +144,6 @@ public class Player : MonoBehaviour
     protected virtual void HitInterrupt() { }
 
     protected virtual void OnSkillActiveEnd() { }
-
-    protected void OnTriggerEnter2D(Collider2D collision)
-    {
-        switch (collision.tag)
-        {
-            case "Obstacle":
-                HP--;
-                playerUI.SetHP(HP);
-                PlayHitEffect();
-                animator.SetTrigger("Hit");
-                HitInterrupt();
-                return;
-            case "Tram":
-                rb.velocityY = jumpForce * 1.5f;
-                var tramAnimator = collision.gameObject.GetComponent<Animator>();
-                tramAnimator.SetTrigger("IsJump");
-                isFalling = false;
-                SetParameterOnlyTrue("Jump");
-                return;
-            case "Item":
-                HP = Mathf.Min(HP + 1, maxHP);
-                playerUI.SetHP(HP);
-                var anim = collision.GetComponent<Animator>();
-                anim.SetTrigger("Collected");
-                Destroy(collision.gameObject, 0.5f);
-                return;
-            case "CheckPoint":
-                collision.GetComponent<SpriteRenderer>().color = Color.red;
-                print(collision.transform.position);
-                return;
-            default:
-                return;
-        }
-    }
 
     protected void PlayHitEffect()
     {
@@ -175,18 +162,61 @@ public class Player : MonoBehaviour
 
     protected virtual IEnumerator SkillActiveRoutine()
     {
-        var wait = new WaitForSeconds(0.1f);
+        var wait = new WaitForSeconds(0.5f);
         isSkilling = true;
         isSkillReady = false;
         float t = skillDuration;
         while (t > 0.05f)
         {
             yield return wait;
-            t -= 0.1f;
-            playerUI.SetSkillCool(t, skillDuration);
+            t -= 0.5f;
+            playerUI.SetCoolDownUI(t, skillDuration, true);
         }
         isSkilling = false;
         OnSkillActiveEnd();
         playerUI.SkillCoolDown(skillCoolTime, () => this.isSkillReady = true);
+    }
+
+    protected void OnTriggerEnter2D(Collider2D collision)
+    {
+        switch (collision.tag)
+        {
+            case "Obstacle":
+                HP--;
+                playerUI.SetHPUI(HP);
+                PlayHitEffect();
+                animator.SetTrigger("Hit");
+                HitInterrupt();
+                if (HP <= 0)
+                {
+                    uiManager.OnDie();
+                }
+                return;
+            case "Tram":
+                rb.velocityY = jumpForce * 1.5f;
+                var tramAnimator = collision.gameObject.GetComponent<Animator>();
+                tramAnimator.SetTrigger("IsJump");
+                isFalling = false;
+                SetParameterOnlyTrue("Jump");
+                return;
+            case "Item":
+                if (collision.name.Contains("Beer"))
+                    uiManager.HealEveryPlayer(1);
+                else if (collision.name.Contains("WaterMelon"))
+                    Heal(2);
+                else
+                    Heal(1);
+                uiManager.OnItemCollected(collision.transform);
+                return;
+            case "CheckPoint":
+                collision.GetComponent<SpriteRenderer>().color = Color.red;
+                uiManager.CheckPointReached(collision.name);
+                return;
+            case "Goal":
+                uiManager.OnLevelComplete();
+                return;
+            default:
+                return;
+        }
     }
 }

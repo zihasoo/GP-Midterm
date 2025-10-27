@@ -7,14 +7,19 @@ public class PlayerPenguin : Player
 
     protected new void Awake()
     {
-        base.Awake();
-        playerUI.Init("Penguin", "Sliding", maxHP);
+        playerUI.Init("Penguin", maxHP);
         if (!animeParameters.Contains("Slide"))
             animeParameters.Add("Slide");
+        base.Awake();
     }
 
     protected new void Update()
     {
+        if (transform.position.y < -10f)
+        {
+            uiManager.OnDie();
+            return;
+        }
         if (isSkilling) return;
 
         float moveInput = ReadMoveInput();
@@ -31,7 +36,7 @@ public class PlayerPenguin : Player
         if (!groundTest)
             isGrounded = false;
 
-        if (Input.GetKeyDown(skillKey) && isSkillReady && moveInput != 0)
+        if (Input.GetKeyDown(GameSettings.SkillKey) && isSkillReady && moveInput != 0)
         {
             vx *= 2f;
             rb.velocity = new Vector2(vx, rb.velocity.y);
@@ -39,7 +44,7 @@ public class PlayerPenguin : Player
             return;
         }    
 
-        if (Input.GetKeyDown(jumpKey) && isGrounded)
+        if (Input.GetKeyDown(GameSettings.JumpKey) && isGrounded)
         {
             isGrounded = false;
             vy = jumpForce;
@@ -82,14 +87,14 @@ public class PlayerPenguin : Player
         {
             yield return wait;
             t -= 0.1f;
-            playerUI.SetSkillCool(t, skillDuration);
+            playerUI.SetCoolDownUI(t, skillDuration, true);
         }
         rb.velocity = new Vector2(rb.velocity.x * 0.3f, rb.velocity.y);
         while (t > 0)
         {
             yield return wait;
             t -= 0.1f;
-            playerUI.SetSkillCool(t, skillDuration);
+            playerUI.SetCoolDownUI(t, skillDuration, true);
         }
         isSkilling = false;
         OnSkillActiveEnd();

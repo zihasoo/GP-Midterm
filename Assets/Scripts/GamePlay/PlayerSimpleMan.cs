@@ -4,13 +4,14 @@ using UnityEngine;
 
 public class PlayerSimpleMan : Player
 {
+    [Header("SimpleMan Data")]
     public GameObject slowFallingEffectPrefab;
     public float slowFallingSpeed;
 
     protected new void Awake()
     {
+        playerUI.Init("SimpleMan", maxHP);
         base.Awake();
-        playerUI.Init("SimpleMan", "Slow Falling", maxHP);
     }
 
     protected override void TryStartSkill()

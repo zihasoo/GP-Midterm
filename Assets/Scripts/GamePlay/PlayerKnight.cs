@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class PlayerKnight : Player
 {
+    [Header("Knight Data")]
     public GameObject blockEffectPrefab;
     public GameObject blockHitEffectPrefab;
 
@@ -11,7 +12,7 @@ public class PlayerKnight : Player
 
     protected new void Awake()
     {
-        playerUI.Init("Knight", "Block", maxHP);
+        playerUI.Init("Knight", maxHP);
         if (!animeParameters.Contains("Block"))
             animeParameters.Add("Block");
         base.Awake();
@@ -27,11 +28,17 @@ public class PlayerKnight : Player
 
     protected override void HitInterrupt()
     {
-        if (skillActiveRoutine != null) StopCoroutine(skillActiveRoutine);
+        if (!isSkilling) return;
+
+
         var pos = transform.position; pos.y += 0.6f;
         Instantiate(blockHitEffectPrefab, pos, Quaternion.identity);
-        Destroy(blockEffectInstance);
+
         isSkilling = false;
+        Destroy(blockEffectInstance);
+        if (skillActiveRoutine != null) 
+            StopCoroutine(skillActiveRoutine);
+
         SetParameterOnlyTrue("Jump");
         playerUI.SkillCoolDown(skillCoolTime, () => isSkillReady = true);
     }

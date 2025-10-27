@@ -71,18 +71,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9d64055de16b6104abb6c5f05aff3923, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hitPrefab: {fileID: 4021103657954561961, guid: 5c755f9bc5253ea418e919994537dcc7, type: 3}
-  maxHP: 5
+  maxHP: 3
   moveSpeed: 5
   jumpForce: 8
   skillDuration: 1.5
-  skillCoolTime: 0
+  skillCoolTime: 5
   groundCheck: {fileID: 8606092694501454995}
   groundCheckRadius: 0.1
   groundLayer:
     serializedVersion: 2
     m_Bits: 64
+  hitPrefab: {fileID: 4021103657954561961, guid: 5c755f9bc5253ea418e919994537dcc7, type: 3}
   playerUI: {fileID: 0}
+  uiManager: {fileID: 0}
 --- !u!212 &3890464538715471637
 SpriteRenderer:
   m_ObjectHideFlags: 0

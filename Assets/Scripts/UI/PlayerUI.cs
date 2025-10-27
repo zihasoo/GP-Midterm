@@ -14,15 +14,18 @@ public class PlayerUI : MonoBehaviour
 
     const float FillMaxWidth = 220f;
     float maxHP;
-    string skillName;
 
-    public void Init(string playerName, string skillName, float maxHP)
+    public void Init(string playerName, float maxHP)
     {
         playerText.text = playerName;
-        this.skillName = skillName;
         this.maxHP = maxHP;
-        SetHP(maxHP);
-        SetSkillCool(0, 0);
+    }
+
+    public void SetDefault()
+    {
+        StopAllCoroutines();
+        SetHPUI(maxHP);
+        SetCoolDownUI(0, 0);
     }
 
     public void SetSelected()
@@ -39,22 +42,25 @@ public class PlayerUI : MonoBehaviour
         playerText.fontSize = 30;
     }
 
-    public void SetHP(float HP)
+    public void SetHPUI(float HP)
     {
         hpText.text = $"HP: {HP} / {maxHP}";
         hpFill.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, FillMaxWidth * (HP / maxHP));
     }
 
-    public void SetSkillCool(float skillCool, float maxCool)
+    public void SetCoolDownUI(float skillCool, float maxCool, bool isUsing = false)
     {
-        if (skillCool >= maxCool)
+        if (skillCool <= 0)
         {
-            skillCoolText.text = $"{skillName}: ready";
+            skillCoolText.text = $"Skill Ready";
             skillCoolFill.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, FillMaxWidth);
         }
         else
         {
-            skillCoolText.text = $"{skillName}: {skillCool:0.0}";
+            if (isUsing)
+                skillCoolText.text = $"Active: {skillCool:0}";
+            else
+                skillCoolText.text = $"Cool Down: {skillCool:0}";
             skillCoolFill.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, FillMaxWidth * (skillCool / maxCool));
         }
     }
@@ -66,14 +72,14 @@ public class PlayerUI : MonoBehaviour
 
     private IEnumerator SkillCoolDownRoutine(float skillCoolTime, Action onEnd)
     {
-        var wait = new WaitForSeconds(0.1f);
-        float t = 0f;
-        SetSkillCool(t, skillCoolTime);
-        while (t < skillCoolTime)
+        var wait = new WaitForSeconds(1);
+        float t = skillCoolTime;
+        SetCoolDownUI(t, skillCoolTime);
+        while (t > 0)
         {
             yield return wait;
-            t += 0.1f;
-            SetSkillCool(t, skillCoolTime);
+            t -= 1f;
+            SetCoolDownUI(t, skillCoolTime);
         }
         onEnd();
     }
