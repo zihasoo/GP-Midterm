@@ -126,18 +126,35 @@ public class Player : MonoBehaviour
 
     protected void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.CompareTag("Obstacle"))
+        switch (collision.tag)
         {
-            HP--;
-            playerUI.SetHP(HP);
-            PlayHitEffect();
-            animator.SetTrigger("Hit");
-            HitInterrupt();
-        }
-        else if (collision.CompareTag("Item"))
-        {
-            HP = Mathf.Min(HP + 1, maxHP);
-            playerUI.SetHP(HP);
+            case "Obstacle":
+                HP--;
+                playerUI.SetHP(HP);
+                PlayHitEffect();
+                animator.SetTrigger("Hit");
+                HitInterrupt();
+                return;
+            case "Tram":
+                rb.velocityY = jumpForce * 1.5f;
+                var tramAnimator = collision.gameObject.GetComponent<Animator>();
+                tramAnimator.SetTrigger("IsJump");
+                isFalling = false;
+                SetParameterOnlyTrue("Jump");
+                return;
+            case "Item":
+                HP = Mathf.Min(HP + 1, maxHP);
+                playerUI.SetHP(HP);
+                var anim = collision.GetComponent<Animator>();
+                anim.SetTrigger("Collected");
+                Destroy(collision.gameObject, 0.5f);
+                return;
+            case "CheckPoint":
+                collision.GetComponent<SpriteRenderer>().color = Color.red;
+                print(collision.transform.position);
+                return;
+            default:
+                return;
         }
     }
 

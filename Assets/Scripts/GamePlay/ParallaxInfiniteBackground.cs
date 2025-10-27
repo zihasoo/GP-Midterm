@@ -1,7 +1,6 @@
 using UnityEngine;
 
-// Attach to a parent GameObject with two child tiles (tileA, tileB). Each tile contains a SpriteRenderer or Mesh.
-// The script repositions the far tile when the camera passes a threshold, creating an infinite loop.
+
 public class ParallaxInfiniteBackground : MonoBehaviour
 {
     public Transform cameraTransform;
@@ -32,8 +31,8 @@ public class ParallaxInfiniteBackground : MonoBehaviour
     {
         // Parallax follow
         Vector3 camDelta = cameraTransform.position - _startCamPos;
-        Vector3 basePos = _startPos + camDelta * parallaxFactor;
-        transform.position = new Vector3(basePos.x, basePos.y, _startPos.z);
+        float baseX = _startPos.x + camDelta.x * parallaxFactor;
+        transform.position = new Vector3(baseX, cameraTransform.position.y, _startPos.z);
 
         // Infinite wrap along X, trigger before edges enter the camera view
         float camX = cameraTransform.position.x;
